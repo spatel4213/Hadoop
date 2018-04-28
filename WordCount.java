@@ -52,6 +52,7 @@ public class WordCount {
        extends Mapper<Object, Text, Text, Text>{
 
     private Text user = new Text();
+    private Text friend = new Text();
     private Text guild = new Text();
 
     public void map(Object key, Text value, Context context
@@ -62,7 +63,10 @@ public class WordCount {
         token = new StringTokenizer(lines.nextToken());
         user.set(token.nextToken());
         guild.set(token.nextToken());
-        if (!guild.toString().equals("N/A")) { context.write(guild, user); }
+        while(token.hasMoreToken(){
+          friend.set(token.nextToken());
+          if (!friend.toString().equals("N/A")) { context.write(user, friend); }
+        }
       }
     }
   }
@@ -74,11 +78,21 @@ public class WordCount {
     public void reduce(Text key, Iterable<Text> values,
                        Context context
                        ) throws IOException, InterruptedException {
-      String users = "";
+      String symmetry = "Has a symmetric friends list.";
+      String asymmetry = "Has an asymmetric friends list.";
+      boolean userSym = true;
+      
       for (Text val : values) {
-        users += val.toString() + " ";
+        if(!val.toString() == ){ //this would use the val.toString() as a key to check another user's friend list for the original user's name
+          userSym = false;
+        }
       }
-      result.set(users);
+      if(userSym == true){
+        result.set(symmetry);
+        }
+      else{
+        result.set(asymmetry);
+      }
       context.write(key, result);
     }
   }
